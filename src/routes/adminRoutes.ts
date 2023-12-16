@@ -1,13 +1,13 @@
 import { Router } from "express";
 import { addBook, getBookByID, isBookValid, modifyBook } from "../services/volumeServices.js";
-import { IBook } from "../types.js";
+import { Book } from "../types.js";
 import { areCatArrayValid, createcategory, deletecategory } from "../services/categoriesServices.js";
 
 const router = Router();
 
 router.post("/createbook", async (req, res) => {
   console.log(req.body);
-  const { author, title, description, isbn, year, image, stock, categories } =
+  const { author, title, description, isbn, year, image, stock, categories, price } =
     req.body;
   
  if(await isBookValid( author, title, description, isbn, year, image, stock, categories )){
@@ -20,7 +20,8 @@ router.post("/createbook", async (req, res) => {
     year,
     image,
     stock,
-    categories
+    categories,
+    price
   );
   res.send(result);
  } else {
@@ -43,7 +44,7 @@ router.put("/modifybook/id/:id", async (req,res)=>{
     res.send("id must be a number")
     return;
   }
-  const { author, title, description, isbn, year, image, stock, categories } = req.body;
+  const { author, title, description, isbn, year, image, stock, categories, price } = req.body;
   const book = await getBookByID(idNum);
 
   if(categories !== undefined && !(await areCatArrayValid(categories))){
@@ -54,7 +55,7 @@ router.put("/modifybook/id/:id", async (req,res)=>{
 
   if(book){
     console.log("libro valido")
-    modifyBook(book,author, title, description, isbn, year, image, stock, categories);
+    modifyBook(book,author, title, description, isbn, year, image, stock, categories,price);
     res.status(200);
     res.send("ok");
   }else{

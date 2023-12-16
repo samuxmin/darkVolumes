@@ -143,15 +143,15 @@ export function isBookValid(author, title, description, isbn, year, image, stock
         return true;
     });
 }
-export function addBook(author, title, description, isbn, year, image, stock, categories) {
+export function addBook(author, title, description, isbn, year, image, stock, categories, price) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // Obtén todos los libros existentes para calcular el nuevo ID
             let books = yield getAllBooks();
             let id = Math.max(...books.map((b) => b.id)) + 1;
             // Inserta el nuevo libro en la tabla 'volume'
-            const insertBookQuery = `INSERT INTO volume (id, author, title, description, isbn, year, image, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-            const insertBookValues = [id, author, title, description, isbn, year, image, stock];
+            const insertBookQuery = `INSERT INTO volume (id, author, title, description, isbn, year, image, stock, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            const insertBookValues = [id, author, title, description, isbn, year, image, stock, price];
             yield pool.execute(insertBookQuery, insertBookValues);
             // Inserta las categorías en la tabla 'volumeCategory' asociadas al nuevo libro
             const insertCategoryQuery = `INSERT INTO volumeCategory (id, category) VALUES (?, ?)`;
@@ -170,7 +170,7 @@ export function addBook(author, title, description, isbn, year, image, stock, ca
         }
     });
 }
-export function modifyBook(book, author, title, description, isbn, year, image, stock, categories) {
+export function modifyBook(book, author, title, description, isbn, year, image, stock, categories, price) {
     return __awaiter(this, void 0, void 0, function* () {
         if (author !== undefined) {
             book.author = author;
@@ -193,6 +193,9 @@ export function modifyBook(book, author, title, description, isbn, year, image, 
         if (stock !== undefined) {
             book.stock = stock;
         }
+        if (price !== undefined) {
+            book.price = price;
+        }
         if (categories !== undefined) {
             book.categories = categories;
             yield updateBookCategories(book);
@@ -202,11 +205,11 @@ export function modifyBook(book, author, title, description, isbn, year, image, 
 }
 export function updateBookBD(book) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { id, author, title, description, isbn, year, image, stock, categories } = book;
+        const { id, author, title, description, isbn, year, image, stock, categories, price } = book;
         const sql = `UPDATE volume 
-                 SET author = ?, title = ?, description = ?, isbn = ?, year = ?, image = ?, stock = ?
+                 SET author = ?, title = ?, description = ?, isbn = ?, year = ?, image = ?, stock = ?, price = ?
                  WHERE id = ?`;
-        const values = [author, title, description, isbn, year, image, stock, id];
+        const values = [author, title, description, isbn, year, image, stock, id, price];
         try {
             pool.query(sql, values);
         }

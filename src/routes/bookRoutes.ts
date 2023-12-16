@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { addBook, getAllBooks, getAllBooksWithCategories, getBookByID, getBookByISBN, getBookSearch, getBooksOrdered } from "../services/volumeServices.js";
-import { IBook, isSortBY, sortBy } from "../types.js";
+import { Book, isSortBY, sortBy } from "../types.js";
 
 const router = Router();
 
@@ -18,7 +18,7 @@ router.get("/sortby/:sort",async(req,res)=>{
         
     }
     const sortType = sort as sortBy;
-    let books: IBook[] = await getBooksOrdered(sortType)
+    let books: Book[] = await getBooksOrdered(sortType)
     res.json(books);
 });
 router.get("/id/:id",async(req,res)=>{

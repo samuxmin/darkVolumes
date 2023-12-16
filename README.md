@@ -46,7 +46,8 @@ the main file is the index.ts file, it uses the routers in the routes folder, wi
     "year": 2023,
     "image": "https://example.com/book_image.jpg",
     "stock": 10,
-    "categories": ["Fiction", "Science Fiction"]
+    "categories": ["Fiction", "Science Fiction"],
+    "price":20
   }
 #### PUT
 - `/api/admin/modifybook/id/:id` body similar to previous one, update the book
@@ -80,7 +81,24 @@ the main file is the index.ts file, it uses the routers in the routes folder, wi
 #### GET
 - `/api/user/email/:email` get user by email (without sensitive information)
 - `/api/user/email/:nick` get user by nick (without sensitive information)
-
+### SALES
+#### POST
+- `http://localhost:3000/api/buy/` buy a book. Body example:
+  ```json
+  {
+  "user":"sam@mail.com",
+  "books":
+    [
+      {
+        "book":{"id":10},
+        "amount":40
+      },
+      {
+        "book":{"id":10},
+        "amount":40
+      }
+    ]
+  }
 ### Prerequisites
 
 Make sure you have the following installed on your machine:

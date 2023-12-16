@@ -13,10 +13,10 @@ import { areCatArrayValid, createcategory, deletecategory } from "../services/ca
 const router = Router();
 router.post("/createbook", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(req.body);
-    const { author, title, description, isbn, year, image, stock, categories } = req.body;
+    const { author, title, description, isbn, year, image, stock, categories, price } = req.body;
     if (yield isBookValid(author, title, description, isbn, year, image, stock, categories)) {
         res.status(200);
-        const result = yield addBook(author, title, description, isbn, year, image, stock, categories);
+        const result = yield addBook(author, title, description, isbn, year, image, stock, categories, price);
         res.send(result);
     }
     else {
@@ -36,7 +36,7 @@ router.put("/modifybook/id/:id", (req, res) => __awaiter(void 0, void 0, void 0,
         res.send("id must be a number");
         return;
     }
-    const { author, title, description, isbn, year, image, stock, categories } = req.body;
+    const { author, title, description, isbn, year, image, stock, categories, price } = req.body;
     const book = yield getBookByID(idNum);
     if (categories !== undefined && !(yield areCatArrayValid(categories))) {
         res.status(400);
@@ -46,7 +46,7 @@ router.put("/modifybook/id/:id", (req, res) => __awaiter(void 0, void 0, void 0,
     ;
     if (book) {
         console.log("libro valido");
-        modifyBook(book, author, title, description, isbn, year, image, stock, categories);
+        modifyBook(book, author, title, description, isbn, year, image, stock, categories, price);
         res.status(200);
         res.send("ok");
     }

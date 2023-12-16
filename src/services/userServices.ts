@@ -1,10 +1,10 @@
 import pool from "../database.js";
-import { IUser } from "../types";
+import { User } from "../types";
 
-export async function getUserByEmail(email:string):Promise<IUser|undefined>{
+export async function getUserByEmail(email:string):Promise<User|undefined>{
     if(!email) return undefined;
     const [rows] = await pool.promise().execute("SELECT * FROM user WHERE email = ?",[email]);
-    const usrs = rows as IUser[]
+    const usrs = rows as User[]
     if(usrs.length >0){
         usrs[0].password = "";
         return usrs[0]
@@ -13,10 +13,10 @@ export async function getUserByEmail(email:string):Promise<IUser|undefined>{
     }
 }
 
-export async function getUserByNick(nick:string):Promise<IUser|undefined>{
+export async function getUserByNick(nick:string):Promise<User|undefined>{
     if(!nick) return undefined;
     const [rows] = await pool.promise().execute("SELECT * FROM user WHERE nick = ?",[nick]);
-    const usrs = rows as IUser[]
+    const usrs = rows as User[]
     if(usrs.length >0){
         usrs[0].password = "";
         return usrs[0]

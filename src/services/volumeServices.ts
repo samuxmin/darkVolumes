@@ -1,10 +1,10 @@
 import pool from "../database.js";
-import { ErrorResult, IBook, sortBy } from "../types.js";
+import { Book, sortBy } from "../types.js";
 import { areCatArrayValid, getAllCategories, getBookCategories } from "./categoriesServices.js";
 
 
-export async function getBookByID(id:number) : Promise<IBook>{
-    return new Promise<IBook>((resolve, reject) => {
+export async function getBookByID(id:number) : Promise<Book>{
+    return new Promise<Book>((resolve, reject) => {
         
         pool.execute(`SELECT * from volume WHERE id = ${id}`, async function (err, rows) {
             if (err) {
@@ -12,7 +12,7 @@ export async function getBookByID(id:number) : Promise<IBook>{
                 reject(err);
                 return;
             }
-            const books = rows as IBook[];
+            const books = rows as Book[];
             if(books[0]){
                 books[0].categories = await getBookCategories(id);
             }
@@ -22,8 +22,8 @@ export async function getBookByID(id:number) : Promise<IBook>{
     });
 }
 
-export async function getBookByISBN(isbn:number) : Promise<IBook>{
-    return new Promise<IBook>((resolve, reject) => {
+export async function getBookByISBN(isbn:number) : Promise<Book>{
+    return new Promise<Book>((resolve, reject) => {
         
         pool.execute(`SELECT * from volume WHERE isbn = ${isbn}`, async function (err, rows) {
             if (err) {
@@ -31,7 +31,7 @@ export async function getBookByISBN(isbn:number) : Promise<IBook>{
                 reject(err);
                 return;
             }
-            const books = rows as IBook[];
+            const books = rows as Book[];
             if(books[0]){
                 books[0].categories = await getBookCategories(isbn);
             }
@@ -41,31 +41,31 @@ export async function getBookByISBN(isbn:number) : Promise<IBook>{
     });
 }
 
-export async function getAllBooks() : Promise<IBook[]>{
-    return new Promise<IBook[]>((resolve, reject) => {
+export async function getAllBooks() : Promise<Book[]>{
+    return new Promise<Book[]>((resolve, reject) => {
         pool.execute("SELECT * from volume", function (err, rows) {
             if (err) {
                 console.error(err);
                 reject(err);
                 return;
             }
-            const books = rows as IBook[];
+            const books = rows as Book[];
             resolve(books);
         });
     });
 }
 
-export async function getAllBooksWithCategories() : Promise<IBook[]>{
-    return new Promise<IBook[]>((resolve, reject) => {
+export async function getAllBooksWithCategories() : Promise<Book[]>{
+    return new Promise<Book[]>((resolve, reject) => {
         pool.execute("SELECT * from volume",async function (err, rows) {
             if (err) {
                 console.error(err);
                 reject(err);
                 return;
             }
-            const books = rows as IBook[];
+            const books = rows as Book[];
             await Promise.all(
-                books.map(async (b: IBook) => {
+                books.map(async (b: Book) => {
                   b.categories = await getBookCategories(b.id);
                 })
               );
@@ -75,23 +75,23 @@ export async function getAllBooksWithCategories() : Promise<IBook[]>{
     });
 }
 
-export async function getBooksOrdered(sort: sortBy):Promise<IBook[]> {
+export async function getBooksOrdered(sort: sortBy):Promise<Book[]> {
     
-    return new Promise<IBook[]>((resolve, reject) => {
+    return new Promise<Book[]>((resolve, reject) => {
         pool.execute(`SELECT * from volume ORDER BY ${sort}`, function (err, rows) {
             if (err) {
                 console.error(err);
                 reject(err);
                 return;
             }
-            const books = rows as IBook[];
+            const books = rows as Book[];
             resolve(books);
         });
     });
 }
 
-export async function getBookSearch(text: string): Promise<IBook[]> {
-    return new Promise<IBook[]>((resolve, reject) => {
+export async function getBookSearch(text: string): Promise<Book[]> {
+    return new Promise<Book[]>((resolve, reject) => {
       const query = `
         SELECT DISTINCT v.*
         FROM volume v
@@ -112,7 +112,7 @@ export async function getBookSearch(text: string): Promise<IBook[]> {
           return;
         }
   
-        const books = rows as IBook[];
+        const books = rows as Book[];
         resolve(books);
       });
     });
@@ -133,7 +133,7 @@ export async function isBookValid(author: string, title: string, description: st
     return true;
 }
 
-export async function addBook(author: string, title: string, description: string, isbn: string, year: number, image: string, stock: number, categories: string[]){
+export async function addBook(author: string, title: string, description: string, isbn: string, year: number, image: string, stock: number, categories: string[],price:number){
     try {
       // Obtén todos los libros existentes para calcular el nuevo ID
       let books = await getAllBooks();
@@ -141,8 +141,8 @@ export async function addBook(author: string, title: string, description: string
       
   
       // Inserta el nuevo libro en la tabla 'volume'
-      const insertBookQuery = `INSERT INTO volume (id, author, title, description, isbn, year, image, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-      const insertBookValues = [id, author, title, description, isbn, year, image, stock];
+      const insertBookQuery = `INSERT INTO volume (id, author, title, description, isbn, year, image, stock, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+      const insertBookValues = [id, author, title, description, isbn, year, image, stock,price];
   
       await pool.execute(insertBookQuery, insertBookValues);
   
@@ -169,7 +169,7 @@ export async function addBook(author: string, title: string, description: string
   }
   
   
-  export async function modifyBook(book:IBook,author: string, title: string, description: string, isbn: string, year: number, image: string, stock: number, categories: string[]){
+  export async function modifyBook(book:Book,author: string, title: string, description: string, isbn: string, year: number, image: string, stock: number, categories: string[],price:number){
     if (author !== undefined) {
         book.author = author;
       }
@@ -191,6 +191,9 @@ export async function addBook(author: string, title: string, description: string
       if (stock !== undefined) {
         book.stock = stock;
       }
+      if(price !== undefined){
+        book.price = price;
+      }
       if (categories !== undefined) {
         book.categories = categories;
         
@@ -198,15 +201,15 @@ export async function addBook(author: string, title: string, description: string
       }
       await updateBookBD(book);
   }
-  export async function updateBookBD(book: IBook) {
-    const { id, author, title, description, isbn, year, image, stock, categories } = book;
+  export async function updateBookBD(book: Book) {
+    const { id, author, title, description, isbn, year, image, stock, categories, price } = book;
 
     const sql = `UPDATE volume 
-                 SET author = ?, title = ?, description = ?, isbn = ?, year = ?, image = ?, stock = ?
+                 SET author = ?, title = ?, description = ?, isbn = ?, year = ?, image = ?, stock = ?, price = ?
                  WHERE id = ?`;
   
 
-    const values = [author, title, description, isbn, year, image, stock, id];
+    const values = [author, title, description, isbn, year, image, stock, id, price];
   
     try {
 
@@ -216,7 +219,7 @@ export async function addBook(author: string, title: string, description: string
     }
   }
 
-export async function updateBookCategories(book:IBook){
+export async function updateBookCategories(book:Book){
     const {id,categories} = book;
     //DELETE PREVIOUS CATEGORIES
     const sql1 = `DELETE FROM volumeCategory where id = ?`;
