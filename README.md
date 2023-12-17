@@ -99,7 +99,45 @@ the main file is the index.ts file, it uses the routers in the routes folder, wi
       }
     ]
   }
-### Prerequisites
+### CART
+#### GET
+- `http://localhost:3000/api/cart/` get cart from user, is needed to pass the user email in the body, example
+  ```json
+  {
+    "user":"sam@mail.com"
+  }
+- This will return all the data from the volume and the amount in the cart
+
+#### DELETE
+- `http://localhost:3000/api/cart/drop` Empty cart, is needed to pass the user email in the body, as above
+#### POST
+- `http://localhost:3000/api/cart/add` Add items to cart. Body example
+```json
+  {
+    "user":"sam@mail.com",
+    "items":[
+      {"id":1,"amount":4},
+      {"id":2,"amount":3}
+    ]
+  }
+- `http://localhost:3000/api/cart/remove` Remove items from cart. Body example
+```json
+  {
+    "user":"sam@mail.com",
+    "items":[
+      {"id":3,"amount":4},
+      {"id":4,"amount":3}
+    ]
+  }
+
+### TO DO
+ - login endpoint
+ - validate user is logged when doing operations in cart
+ - validate user is logged as admin when using admin services
+ - automate testing for all the endpoints
+ - frontend :)
+
+ ### Prerequisites
 
 Make sure you have the following installed on your machine:
 

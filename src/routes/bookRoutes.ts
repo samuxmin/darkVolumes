@@ -11,8 +11,7 @@ router.get("/", async (req,res)=>{
 })
 router.get("/sortby/:sort",async(req,res)=>{
     const { sort } = req.params;
-    
-    
+
     if(!isSortBY(sort)){
         return res.send("el pepe ete sech añaña")
         

@@ -4,6 +4,7 @@ import categoryRouter from "./routes/categoryRoutes.js";
 import adminRouter from "./routes/adminRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import salesRouter from "./routes/salesRoutes.js";
+import cartRouter from "./routes/cartRoutes.js";
 console.log("Hola mundo");
 const app = express();
 const PORT = 3000;
@@ -19,6 +20,7 @@ app.use("/api/categories", categoryRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/user", userRouter);
 app.use("/api/buy/", salesRouter);
+app.use("/api/cart/", cartRouter);
 /*
 async function testeando(){
   let booksAm : BookWithAmount[] = [];
