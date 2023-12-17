@@ -112,7 +112,7 @@ the main file is the index.ts file, it uses the routers in the routes folder, wi
 - `http://localhost:3000/api/cart/drop` Empty cart, is needed to pass the user email in the body, as above
 #### POST
 - `http://localhost:3000/api/cart/add` Add items to cart. Body example
-```json
+  ```json
   {
     "user":"sam@mail.com",
     "items":[
@@ -121,7 +121,7 @@ the main file is the index.ts file, it uses the routers in the routes folder, wi
     ]
   }
 - `http://localhost:3000/api/cart/remove` Remove items from cart. Body example
-```json
+  ```json
   {
     "user":"sam@mail.com",
     "items":[
