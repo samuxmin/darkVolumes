@@ -15,7 +15,7 @@ export function getUserByEmail(email) {
         const [rows] = yield pool.promise().execute("SELECT * FROM user WHERE email = ?", [email]);
         const usrs = rows;
         if (usrs.length > 0) {
-            usrs[0].password = "";
+            //usrs[0].password = "";
             return usrs[0];
         }
         else {

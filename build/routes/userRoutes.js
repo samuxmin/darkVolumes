@@ -8,10 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Router } from "express";
-import { register } from "../services/auth.js";
+import { login, register } from "../services/auth.js";
 import { getUserByEmail, getUserByNick } from "../services/userServices.js";
 const router = Router();
 router.post("/register", register);
+router.post("/login", login);
 router.get("/email/:email", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email } = req.params;
     const usr = yield getUserByEmail(email);

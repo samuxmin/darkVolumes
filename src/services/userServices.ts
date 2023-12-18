@@ -6,7 +6,7 @@ export async function getUserByEmail(email:string):Promise<User|undefined>{
     const [rows] = await pool.promise().execute("SELECT * FROM user WHERE email = ?",[email]);
     const usrs = rows as User[]
     if(usrs.length >0){
-        usrs[0].password = "";
+        //usrs[0].password = "";
         return usrs[0]
     }else{
         return undefined

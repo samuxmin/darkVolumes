@@ -5,10 +5,14 @@ import adminRouter from "./routes/adminRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import salesRouter from "./routes/salesRoutes.js";
 import cartRouter from "./routes/cartRoutes.js";
+import { validateAdmin } from "./middlewares/validateAdmin.js";
+import { validateJWT } from "./middlewares/validateJWT.js";
+
 import { saveSaleToDB } from "./services/sales.js";
 import { getUserByEmail, getUserByNick } from "./services/userServices.js";
 import { BookWithAmount } from "./types.js";
 import { getBookByID } from "./services/volumeServices.js";
+
 
 
 console.log("Hola mundo");
@@ -19,16 +23,14 @@ app.listen(PORT,()=>{
   console.log("Servidor corriendo en el puerto " + PORT)
 });
 app.use(express.json())
-app.get("/", (_, res) => {
-  res.send("hola");
-});
+app.use(express.static("public"))
 
 app.use("/api/volumes", bookRouter);
 app.use("/api/categories", categoryRouter);
-app.use("/api/admin",adminRouter);
+app.use("/api/admin",[validateJWT,validateAdmin],adminRouter);
 app.use("/api/user",userRouter);
 app.use("/api/buy/",salesRouter)
-app.use("/api/cart/",cartRouter)
+app.use("/api/cart/",[validateJWT],cartRouter)
 
 /*
 async function testeando(){

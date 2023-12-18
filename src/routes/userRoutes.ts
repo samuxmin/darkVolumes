@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { register } from "../services/auth.js";
+import { login, register } from "../services/auth.js";
 import { getUserByEmail, getUserByNick } from "../services/userServices.js";
 
 const router = Router();
 
 router.post("/register",register);
-
+router.post("/login",login)
 router.get("/email/:email",async (req,res)=>{
     const {email} = req.params
     const usr = await getUserByEmail(email);

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+</head>
+<body>
+    <h1>Register</h1>
+    <form id="register">
+        <label for="email">Email</label>
+        <input type="email" required placeholder="Email" name="email" id="email">
+
+        <label for="nick">Nick</label>
+        <input type="text" required placeholder="Nick" name="nick" id="nick">
+
+        <label for="birth">Birth date</label>
+        <input type="date" required placeholder="Birth date" name="birth" id="birth">
+
+        <label for="password">Password</label>
+        <input type="password" required placeholder="Password" name="password" id="password">
+
+        <label for="repeatpassword">Repeat password</label>
+        <input type="password" required placeholder="Repeat password" name="repeatpassword" id="repeatpassword">
+        <button>Sign in</button>
+    </form>
+    <script>
+        signForm = document.getElementById("register");
+        signForm.addEventListener("submit", e => submit(e));
+
+        async function submit(e){
+            e.preventDefault()
+            const email = document.getElementById("email").value
+            const nick = document.getElementById("nick").value;
+            const password = document.getElementById("password").value;
+            const repeatpassword = document.getElementById("repeatpassword").value;
+            const birth = document.getElementById("birth").value;
+
+            if(password !== repeatpassword){
+                alert("Passwords dont match");
+                return;
+            }
+
+            if( await verifyMail(mail)){
+                alert("Email in use");
+                return;
+            }
+            if( await verifyNick(nick)){
+                alert("Nick in use");
+                return;
+            }
+
+            console.log(userNick);
+            return;
+        }
+    async function verifyNick(nick){
+        const userNick = await fetch(`api/user/nick/${nick}`)
+        return userNick.ok;
+    }
+    async function verifyMail(mail){
+        const userMail = await fetch(`api/user/mail/${mail}`)
+        return userMail.ok;
+    }
+    </script>
+</body>
+</html>

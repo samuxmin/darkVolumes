@@ -23,6 +23,38 @@ Welcome to the Manga Book Library App! This application allows users to manage a
 the main file is the index.ts file, it uses the routers in the routes folder, wich uses the files in the services folder to do all the logic needed
 
 ## API Documentation
+### USERS
+#### POST
+- `/api/user/register/` Create user, date must be string with Year-Month-Date order. Body example: 
+  ```json
+  {
+    "email":"sam@mail.com",
+    "nick":"samuxmin",
+    "password":"1234",
+    "birthdate":"2002-07-22"
+  }
+
+- `/api/user/login/` Login as user. Body example:
+  ```json
+  {
+    "email":"sam@mail.com",
+    "password":"1234"
+  }
+  This will return "ok" if the credentials are valid, and the token for operations that require authorization
+  { 
+    "ok":true,
+    "msg": "Login successful",
+    "token":"123456"
+  }
+  Else
+  {
+    "ok": false,
+    "msg": "login unsuccesful"
+  }
+#### GET
+- `/api/user/email/:email` get user by email (without sensitive information)
+- `/api/user/email/:nick` get user by nick (without sensitive information)
+
 
 ### Volumes
 
@@ -36,7 +68,7 @@ the main file is the index.ts file, it uses the routers in the routes folder, wi
 
 #### POST
 
-- `/api/admin/createbook` Create volume. Body example:
+- `/api/admin/createbook` Create volume. You need to be logged as admin and pass the token, see the USER actions. Body example:
   ```json
   {
     "author": "Author Name",
@@ -47,13 +79,15 @@ the main file is the index.ts file, it uses the routers in the routes folder, wi
     "image": "https://example.com/book_image.jpg",
     "stock": 10,
     "categories": ["Fiction", "Science Fiction"],
-    "price":20
+    "price":20,
+    "token":"12345678"
   }
 #### PUT
 - `/api/admin/modifybook/id/:id` body similar to previous one, update the book
 
 #### DELETE
 - `/api/admin/deletebook/id/:id` delete book identified by id
+
 
 ### CATEGORIES
 #### GET
@@ -67,20 +101,6 @@ the main file is the index.ts file, it uses the routers in the routes folder, wi
 #### DELETE
 - `/api/admin/deletecategory/:category` Delete category
 
-### USERS
-#### POST
-- `/api/user/register/` Create user, date must be string with Year-Month-Date order. Body example: 
-  ```json
-  {
-    "email":"sam@mail.com",
-    "nick":"samuxmin",
-    "password":"1234",
-    "birthdate":"2002-07-22"
-  }
-
-#### GET
-- `/api/user/email/:email` get user by email (without sensitive information)
-- `/api/user/email/:nick` get user by nick (without sensitive information)
 ### SALES
 #### POST
 - `http://localhost:3000/api/buy/` buy a book. Body example:
@@ -99,12 +119,15 @@ the main file is the index.ts file, it uses the routers in the routes folder, wi
       }
     ]
   }
+
+
 ### CART
-#### GET
-- `http://localhost:3000/api/cart/` get cart from user, is needed to pass the user email in the body, example
+For all the cart functions, the user will be parsed from the token sent in the request 
+#### GET 
+- `http://localhost:3000/api/cart/` get cart from user
   ```json
   {
-    "user":"sam@mail.com"
+    "token":"123456"
   }
 - This will return all the data from the volume and the amount in the cart
 
@@ -114,7 +137,7 @@ the main file is the index.ts file, it uses the routers in the routes folder, wi
 - `http://localhost:3000/api/cart/add` Add items to cart. Body example
   ```json
   {
-    "user":"sam@mail.com",
+    "token":"123456",
     "items":[
       {"id":1,"amount":4},
       {"id":2,"amount":3}
@@ -123,7 +146,7 @@ the main file is the index.ts file, it uses the routers in the routes folder, wi
 - `http://localhost:3000/api/cart/remove` Remove items from cart. Body example
   ```json
   {
-    "user":"sam@mail.com",
+    "token":"123456",
     "items":[
       {"id":3,"amount":4},
       {"id":4,"amount":3}
@@ -131,9 +154,6 @@ the main file is the index.ts file, it uses the routers in the routes folder, wi
   }
 
 ### TO DO
- - login endpoint
- - validate user is logged when doing operations in cart
- - validate user is logged as admin when using admin services
  - automate testing for all the endpoints
  - frontend :)
 
