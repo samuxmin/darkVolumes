@@ -1,25 +1,18 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-import { Router } from "express";
-import { getUserByEmail } from "../services/userServices.js";
-import { getBookByID } from "../services/volumeServices.js";
-import { saveSaleToDB } from "../services/sales.js";
-const router = Router();
-router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const userServices_1 = require("../services/userServices");
+const volumeServices_1 = require("../services/volumeServices");
+const sales_1 = require("../services/sales");
+const router = (0, express_1.Router)();
+router.post("/", async (req, res) => {
     const { user: userMail, books } = req.body;
     if (!userMail || !(Array.isArray(books))) {
         res.status(400);
         res.send("Invalid request body");
         return;
     }
-    const user = yield getUserByEmail(userMail);
+    const user = await (0, userServices_1.getUserByEmail)(userMail);
     if (user == undefined) {
         res.status(400);
         res.send("User not found");
@@ -29,7 +22,7 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         //Verify each book is valid
         for (let i = 0; i < books.length; i++) {
             let b = books[i];
-            let book = yield getBookByID(b.book.id);
+            let book = await (0, volumeServices_1.getBookByID)(b.book.id);
             if (book == undefined) {
                 res.status(400);
                 res.send(`Book with id ${b.book.id} not found`);
@@ -41,7 +34,7 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             }
             books[i].book = book;
         }
-        saveSaleToDB(user, books);
+        (0, sales_1.saveSaleToDB)(user, books);
         res.status(200).send("ok");
     }
     catch (err) {
@@ -50,5 +43,5 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.send("Something went wrong ಠ╭╮ಠ");
         return;
     }
-}));
-export default router;
+});
+exports.default = router;

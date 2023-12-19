@@ -1,4 +1,4 @@
-import { User } from "../types.js";
+import { User } from "../types";
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
 export function createToken(user:User) {

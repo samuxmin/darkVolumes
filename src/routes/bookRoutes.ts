@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { addBook, getAllBooks, getAllBooksWithCategories, getBookByID, getBookByISBN, getBookSearch, getBooksOrdered } from "../services/volumeServices.js";
-import { Book, isSortBY, sortBy } from "../types.js";
+import { addBook, getAllBooks, getAllBooksWithCategories, getBookByID, getBookByISBN, getBookSearch, getBooksOrdered } from "../services/volumeServices";
+import { Book, isSortBY, sortBy } from "../types";
 
 const router = Router();
 
@@ -29,8 +29,10 @@ router.get("/id/:id",async(req,res)=>{
         return;
     }
     const bookData = await getBookByID(idNum);
-    if(bookData)
+    if(bookData){
         res.json(bookData);
+        return;
+    }
     else{
         res.status(400);
         res.send("Error, book identifyed by id " + id + " doesnt exists");
@@ -47,11 +49,14 @@ router.get("/isbn/:isbn",async(req,res)=>{
         return;
     }
     const bookData = await getBookByISBN(isbnNum);
-    if(bookData)
+    if(bookData){
         res.json(bookData);
-    else
+        return;
+    }
+    else{
         res.status(404 )
         res.send("Error, book with isbn " + isbn + " doesnt exists");
+    }
 })
 
 router.get("/search/:text",async (req,res)=>{

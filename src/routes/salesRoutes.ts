@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { getUserByEmail } from "../services/userServices.js";
-import { getBookByID } from "../services/volumeServices.js";
+import { getUserByEmail } from "../services/userServices";
+import { getBookByID } from "../services/volumeServices";
 import { BookWithAmount } from "../types";
 
-import { saveSaleToDB } from "../services/sales.js";
+import { saveSaleToDB } from "../services/sales";
 const router = Router();
 router.post("/", async (req,res) => {
     const {user : userMail, books} = req.body;

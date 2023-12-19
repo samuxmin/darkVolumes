@@ -1,5 +1,5 @@
 import { RowDataPacket } from "mysql2";
-import pool from "../database.js";
+import pool from "../database";
 
 export async function getAllCategories() : Promise<string[]>{
     return new Promise<string[]>((resolve, reject) => {

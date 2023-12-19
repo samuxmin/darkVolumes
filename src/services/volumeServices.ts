@@ -1,6 +1,6 @@
-import pool from "../database.js";
-import { Book, sortBy } from "../types.js";
-import { areCatArrayValid, getAllCategories, getBookCategories } from "./categoriesServices.js";
+import pool from "../database";
+import { Book, sortBy } from "../types";
+import { areCatArrayValid, getAllCategories, getBookCategories } from "./categoriesServices";
 
 
 export async function getBookByID(id:number) : Promise<Book>{
@@ -144,7 +144,7 @@ export async function addBook(author: string, title: string, description: string
       const insertBookQuery = `INSERT INTO volume (id, author, title, description, isbn, year, image, stock, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
       const insertBookValues = [id, author, title, description, isbn, year, image, stock,price];
   
-      await pool.execute(insertBookQuery, insertBookValues);
+      await pool.promise().execute(insertBookQuery, insertBookValues);
   
       // Inserta las categorías en la tabla 'volumeCategory' asociadas al nuevo libro
       const insertCategoryQuery = `INSERT INTO volumeCategory (id, category) VALUES (?, ?)`;

@@ -1,5 +1,5 @@
-import { BookWithAmount, User } from "../types.js";
-import p from "../database.js";
+import { BookWithAmount, User } from "../types";
+import p from "../database";
 import { ResultSetHeader } from "mysql2";
 
 const pool = p.promise();

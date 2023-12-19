@@ -1,5 +1,11 @@
-import jwt from 'jsonwebtoken';
-export function validateJWT(req, res, next) {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.validateJWT = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+function validateJWT(req, res, next) {
     // x-token headers
     const token = req.body.token || req.header('x-token');
     if (!token) {
@@ -9,7 +15,7 @@ export function validateJWT(req, res, next) {
         });
     }
     try {
-        const { email } = jwt.verify(token, 'your-secret-key');
+        const { email } = jsonwebtoken_1.default.verify(token, 'your-secret-key');
         req.body.user = email;
     }
     catch (error) {
@@ -20,3 +26,4 @@ export function validateJWT(req, res, next) {
     }
     next();
 }
+exports.validateJWT = validateJWT;

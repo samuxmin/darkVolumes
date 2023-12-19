@@ -1,12 +1,11 @@
 import { Router } from "express";
-import { addBook, getBookByID, isBookValid, modifyBook } from "../services/volumeServices.js";
-import { Book } from "../types.js";
-import { areCatArrayValid, createcategory, deletecategory } from "../services/categoriesServices.js";
+import { addBook, getBookByID, isBookValid, modifyBook } from "../services/volumeServices";
+import { areCatArrayValid, createcategory, deletecategory } from "../services/categoriesServices";
+import pool from "../database";
 
 const router = Router();
 
 router.post("/createbook", async (req, res) => {
-  console.log(req.body);
   const { author, title, description, isbn, year, image, stock, categories, price } =
     req.body;
   
@@ -23,7 +22,7 @@ router.post("/createbook", async (req, res) => {
     categories,
     price
   );
-  res.send(result);
+  res.json(result);
  } else {
     res.status(400);
     res.send("error papu");
@@ -78,6 +77,19 @@ router.delete("/deletebook/id/:id",async(req,res) => {
   if(!book){
     res.status(404);
     res.send("Error, book identifyed by id " + id + " doesnt exists");
+  }else{
+    try{
+      await pool.promise().query("START TRANSACTION");
+      await pool.promise().query("delete from volumeCategory where id = ?",[idNum]);
+      await pool.promise().query("delete from volume where id = ?",[idNum]);
+      await pool.promise().query("COMMIT");
+      res.status(200).send({ok:true,msg:"book deleted"});
+    return;
+  }catch(err){
+    console.log(err)
+    pool.execute("ROLLBACK");
+    res.status(500).send();
+  }
   }
 })
 

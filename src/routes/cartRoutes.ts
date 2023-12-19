@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { getUserByEmail } from "../services/userServices.js";
-import pool from "../database.js";
-import { getBookByID } from "../services/volumeServices.js";
-import { Book } from "../types.js";
-import { getUserCart } from "../services/cart.js";
+import { getUserByEmail } from "../services/userServices";
+import pool from "../database";
+import { getBookByID } from "../services/volumeServices";
+import { Book } from "../types";
+import { getUserCart } from "../services/cart";
 
 const router = Router();
 

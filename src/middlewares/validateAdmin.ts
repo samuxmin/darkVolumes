@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import pool from "../database.js";
+import pool from "../database";
 
 export async function validateAdmin(req: Request, res: Response, next: NextFunction) {
     const { user } = req.body;

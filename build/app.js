@@ -1,0 +1,25 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const bookRoutes_1 = __importDefault(require("./routes/bookRoutes"));
+const categoryRoutes_1 = __importDefault(require("./routes/categoryRoutes"));
+const adminRoutes_1 = __importDefault(require("./routes/adminRoutes"));
+const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
+const salesRoutes_1 = __importDefault(require("./routes/salesRoutes"));
+const cartRoutes_1 = __importDefault(require("./routes/cartRoutes"));
+const validateAdmin_1 = require("./middlewares/validateAdmin");
+const validateJWT_1 = require("./middlewares/validateJWT");
+console.log("Hola mundo");
+const app = (0, express_1.default)();
+app.use(express_1.default.json());
+app.use(express_1.default.static("public"));
+app.use("/api/volumes", bookRoutes_1.default);
+app.use("/api/categories", categoryRoutes_1.default);
+app.use("/api/admin", [validateJWT_1.validateJWT, validateAdmin_1.validateAdmin], adminRoutes_1.default);
+app.use("/api/user", userRoutes_1.default);
+app.use("/api/buy/", salesRoutes_1.default);
+app.use("/api/cart/", [validateJWT_1.validateJWT], cartRoutes_1.default);
+exports.default = app;

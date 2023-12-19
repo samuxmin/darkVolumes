@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { getUserByEmail, getUserByNick } from "./userServices.js";
+import { getUserByEmail, getUserByNick } from "./userServices";
 import bcrypt from "bcrypt"
-import pool from "../database.js";
-import { createToken } from "./token.js";
+import pool from "../database";
+import { createToken } from "./token";
 
 export async function register(req:Request,res:Response){
     const {email,nick,password,birthdate} = req.body
@@ -55,6 +55,7 @@ export async function login(req:Request,res:Response){
             return
         }else{
             const token = createToken(user);
+            user.password = "";
             res.json({ ok: true, msg: "Login successful", token, user });
         }
     });

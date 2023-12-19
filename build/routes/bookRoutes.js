@@ -1,31 +1,24 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-import { Router } from "express";
-import { getAllBooksWithCategories, getBookByID, getBookByISBN, getBookSearch, getBooksOrdered } from "../services/volumeServices.js";
-import { isSortBY } from "../types.js";
-const router = Router();
-router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const books = yield getAllBooksWithCategories();
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const volumeServices_1 = require("../services/volumeServices");
+const types_1 = require("../types");
+const router = (0, express_1.Router)();
+router.get("/", async (req, res) => {
+    const books = await (0, volumeServices_1.getAllBooksWithCategories)();
     res.json(books);
     //console.log(books);
-}));
-router.get("/sortby/:sort", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+});
+router.get("/sortby/:sort", async (req, res) => {
     const { sort } = req.params;
-    if (!isSortBY(sort)) {
+    if (!(0, types_1.isSortBY)(sort)) {
         return res.send("el pepe ete sech añaña");
     }
     const sortType = sort;
-    let books = yield getBooksOrdered(sortType);
+    let books = await (0, volumeServices_1.getBooksOrdered)(sortType);
     res.json(books);
-}));
-router.get("/id/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+});
+router.get("/id/:id", async (req, res) => {
     const { id } = req.params;
     const idNum = parseInt(id);
     if (isNaN(idNum)) {
@@ -33,15 +26,15 @@ router.get("/id/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.send("id must be a valid number");
         return;
     }
-    const bookData = yield getBookByID(idNum);
+    const bookData = await (0, volumeServices_1.getBookByID)(idNum);
     if (bookData)
         res.json(bookData);
     else {
         res.status(400);
         res.send("Error, book identifyed by id " + id + " doesnt exists");
     }
-}));
-router.get("/isbn/:isbn", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+});
+router.get("/isbn/:isbn", async (req, res) => {
     const { isbn } = req.params;
     const isbnNum = parseInt(isbn);
     if (isNaN(isbnNum)) {
@@ -49,21 +42,21 @@ router.get("/isbn/:isbn", (req, res) => __awaiter(void 0, void 0, void 0, functi
         res.send("isbn must be a valid number");
         return;
     }
-    const bookData = yield getBookByISBN(isbnNum);
+    const bookData = await (0, volumeServices_1.getBookByISBN)(isbnNum);
     if (bookData)
         res.json(bookData);
     else
         res.status(404);
     res.send("Error, book with isbn " + isbn + " doesnt exists");
-}));
-router.get("/search/:text", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+});
+router.get("/search/:text", async (req, res) => {
     const { text } = req.params;
-    const results = yield getBookSearch(text);
+    const results = await (0, volumeServices_1.getBookSearch)(text);
     res.json(results);
-}));
+});
 /*
 router.post("/",async (req,res) => {
 
     addBook("autor","title","descriptin","isbn",2020,"img",14,["cat1","cat2"])
 })*/
-export default router;
+exports.default = router;
