@@ -72,8 +72,38 @@ async function createBook(){
 }
 async function adminCreate(){
     let response = await createBook();
+    let {id} = response.body
     expect(response.statusCode).toBe(200);
     expect(await getBookByID(response.body.id)).not.toBe(undefined);
+
+    const modifyBookResponse = await request(app)
+    .put(`/api/admin/modifybook/id/${id}`)
+    .send({
+      author: 'New Author Name',
+      title: 'New Title of the Book',
+      description: 'New Description of the book',
+      isbn: '9876543210123',
+      year: 2024,
+      image: 'https://example.com/new_book_image.jpg',
+      stock: 15,
+      categories: ['Adventure', 'Mystery'],
+      price: 25,
+      token,
+    });
+    let bookModifyed = await getBookByID(id);
+    
+    expect(bookModifyed).toEqual({
+        id,
+        author: 'New Author Name',
+        title: 'New Title of the Book',
+        description: 'New Description of the book',
+        isbn: '9876543210123',
+        year: 2024,
+        image: 'https://example.com/new_book_image.jpg',
+        stock: 15,
+        categories: ['Adventure', 'Mystery'],
+        price: 25
+      })
     let delResp = await deleteBook(response.body.id);
 
     expect(delResp.body.ok);

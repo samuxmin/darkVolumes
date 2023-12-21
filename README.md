@@ -103,7 +103,7 @@ the main file is the index.ts file, it uses the routers in the routes folder, wi
 
 ### SALES
 #### POST
-- `http://localhost:3000/api/buy/` buy a book. Body example:
+- `/api/buy/` buy a book. Body example:
   ```json
   {
   "user":"sam@mail.com",
@@ -124,7 +124,7 @@ the main file is the index.ts file, it uses the routers in the routes folder, wi
 ### CART
 For all the cart functions, the user will be parsed from the token sent in the request 
 #### GET 
-- `http://localhost:3000/api/cart/` get cart from user
+- `/api/cart/` get cart from user
   ```json
   {
     "token":"123456"
@@ -132,9 +132,9 @@ For all the cart functions, the user will be parsed from the token sent in the r
 - This will return all the data from the volume and the amount in the cart
 
 #### DELETE
-- `http://localhost:3000/api/cart/drop` Empty cart, is needed to pass the user email in the body, as above
+- `/api/cart/drop` Empty cart, is needed to pass the user email in the body, as above
 #### POST
-- `http://localhost:3000/api/cart/add` Add items to cart. Body example
+- `/api/cart/add` Add items to cart. Body example
   ```json
   {
     "token":"123456",
@@ -143,7 +143,7 @@ For all the cart functions, the user will be parsed from the token sent in the r
       {"id":2,"amount":3}
     ]
   }
-- `http://localhost:3000/api/cart/remove` Remove items from cart. Body example
+- `/api/cart/remove` Remove items from cart. Body example
   ```json
   {
     "token":"123456",

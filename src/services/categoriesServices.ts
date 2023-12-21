@@ -69,9 +69,15 @@ export async function createcategory(category:string){
 }
 
 export async function deletecategory(category:string){
+    let allCats = await getAllCategories();
+    if(!(allCats.includes(category))){
+        return false;
+    }
     try {
-        pool.execute("DELETE category where category = ?",[category]);
+        await pool.promise().execute("DELETE from category where category = ?",[category]);
+        return true;
     } catch (error) {
-        
+        console.log(error)
+        return false;
     }
 }

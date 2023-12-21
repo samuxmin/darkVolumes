@@ -1,0 +1,30 @@
+endpoints
+
+
+`/api/user/register/` 
+- `/api/user/login/` TESTED
+
+- `/api/user/email/:email` TESTED
+- `/api/user/email/:nick`
+
+
+- `/api/volumes/` TESTED
+- `/api/volumes/id/:id` TESTED
+- `/api/volumes/isbn/:isbn` TESTED
+- `/api/volumes/sortby/:sort` 
+- `/api/volumes/search/:text`
+
+- `/api/admin/createbook` TESTED
+- `/api/admin/modifybook/id/:id` TESTED
+- `/api/admin/deletebook/id/:id` TESTED
+
+- `/api/categories/` TESTED
+- `/api/admin/createcategory` TESTED
+`/api/admin/deletecategory/:category` TESTED
+
+`/api/buy/`
+
+`/api/cart/`
+`/api/cart/drop`
+`/api/cart/add`
+`/api/cart/remove`

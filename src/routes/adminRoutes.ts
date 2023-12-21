@@ -25,8 +25,8 @@ router.post("/createbook", async (req, res) => {
   res.json(result);
  } else {
     res.status(400);
-    res.send("error papu");
-    console.log("Libro no valido")
+    res.send({ok:false,msg:"libro no valido"});
+
   }
 
 });
@@ -38,9 +38,11 @@ router.get("/", (req, res) => {
 router.put("/modifybook/id/:id", async (req,res)=>{
   const {id} = req.params
   const idNum = parseInt(id);
+
+
   if(isNaN(idNum)){
     res.status(400)
-    res.send("id must be a number")
+    res.send({ok:false,msg:"id must be a number"})
     return;
   }
   const { author, title, description, isbn, year, image, stock, categories, price } = req.body;
@@ -48,18 +50,17 @@ router.put("/modifybook/id/:id", async (req,res)=>{
 
   if(categories !== undefined && !(await areCatArrayValid(categories))){
     res.status(400)
-    res.send("Invalid categories");
+    res.send({ok:false,msg:"Invalid categories"});
     return;
   };
 
   if(book){
-    console.log("libro valido")
-    modifyBook(book,author, title, description, isbn, year, image, stock, categories,price);
+    await modifyBook(book,author, title, description, isbn, year, image, stock, categories,price);
     res.status(200);
-    res.send("ok");
+    res.send({ok:true, msg:"book modifyed"});
   }else{
     res.status(404);
-    res.send("Error, book identifyed by id " + id + " doesnt exists");
+    res.send({ok:false, msg:"Error, book identifyed by id " + id + " doesnt exists"});
   }
 })
 
@@ -100,11 +101,11 @@ router.post("/createcategory",async(req,res) => {
       const result =await createcategory(category);
       if(result =="ok"){
         res.status(200);
-        res.send(`category ${category} created`);
+        res.send({ok:true, msg:`category ${category} created`});
         return;
       }else{
         res.status(400);
-        res.send("gg");
+        res.send({ok:false, msg:"category already exists"});
       }
     }else throw("category undefined");
   }catch(err){
@@ -113,12 +114,15 @@ router.post("/createcategory",async(req,res) => {
   }
 })
 
-router.delete("/deletecategory/:category",(req,res)=>{
+router.delete("/deletecategory/:category",async (req,res)=>{
   const {category} = req.params
   try {
-    deletecategory(category);
-    res.status(200);
-    res.send(`category ${category} deleted`);
+    let del = await deletecategory(category);
+    if(del){
+      res.status(200);
+      res.send(`category ${category} deleted`);
+    }
+    
     return;
   } catch (error) {
     res.status(400);

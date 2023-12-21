@@ -156,8 +156,6 @@ export async function addBook(author: string, title: string, description: string
         })
       );
   
-      console.log('Libro agregado con éxito');
-  
       // Obtén el libro recién insertado
       const book = await getBookByID(id);
   
@@ -199,6 +197,7 @@ export async function addBook(author: string, title: string, description: string
         
         await updateBookCategories(book);
       }
+ 
       await updateBookBD(book);
   }
   export async function updateBookBD(book: Book) {
@@ -207,13 +206,14 @@ export async function addBook(author: string, title: string, description: string
     const sql = `UPDATE volume 
                  SET author = ?, title = ?, description = ?, isbn = ?, year = ?, image = ?, stock = ?, price = ?
                  WHERE id = ?`;
-  
+ 
 
-    const values = [author, title, description, isbn, year, image, stock, id, price];
+    const values = [author, title, description, isbn, year, image, stock, price, id];
   
     try {
 
-      pool.query(sql, values);
+      let q = await pool.promise().query(sql, values);
+
     } catch (error) {
       console.error('Error al actualizar el libro:', error);
     }
@@ -230,8 +230,8 @@ export async function updateBookCategories(book:Book){
   
     // Usa Promise.all para esperar a que todas las inserciones de categorías se completen
     await Promise.all(
-      categories.map((cat) => {
-        return pool.execute(insertCategoryQuery, [id, cat]);
+      categories.map(async (cat) => {
+        await pool.promise().execute(insertCategoryQuery, [id, cat]);
       })
     )
 

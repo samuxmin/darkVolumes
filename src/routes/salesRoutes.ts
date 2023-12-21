@@ -5,19 +5,20 @@ import { BookWithAmount } from "../types";
 
 import { saveSaleToDB } from "../services/sales";
 const router = Router();
+
 router.post("/", async (req,res) => {
-    const {user : userMail, books} = req.body;
-    if( !userMail || !(Array.isArray(books))){
+    const {user , books} = req.body;
+    if( !user || !(Array.isArray(books))){
         res.status(400);
-        res.send("Invalid request body");
+        res.send({ok:false,msg:"Invalid request body"});
         return;
     }
 
-    const user = await getUserByEmail(userMail)
+    const userVerf = await getUserByEmail(user)
 
-    if(user == undefined){
+    if(userVerf == undefined){
         res.status(400);
-        res.send("User not found");
+        res.send({ok:false,msg:"User not found"});
         return;
     }
     try{
@@ -41,12 +42,12 @@ router.post("/", async (req,res) => {
             books[i].book = book;
 
         }
-        saveSaleToDB(user ,books as BookWithAmount[]);
-        res.status(200).send("ok");
+        await saveSaleToDB(user ,books as BookWithAmount[]);
+        res.status(200).send({ok:true,msg:"ok"});
     }catch(err){
         console.log(err);
         res.status(400);
-        res.send("Something went wrong ಠ╭╮ಠ");
+        res.send({ok:false,msg:"Something went wrong ಠ╭╮ಠ"});
         return;
     }
 
