@@ -135,14 +135,13 @@ async function addBook(author, title, description, isbn, year, image, stock, cat
         // Inserta el nuevo libro en la tabla 'volume'
         const insertBookQuery = `INSERT INTO volume (id, author, title, description, isbn, year, image, stock, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
         const insertBookValues = [id, author, title, description, isbn, year, image, stock, price];
-        await database_1.default.execute(insertBookQuery, insertBookValues);
+        await database_1.default.promise().execute(insertBookQuery, insertBookValues);
         // Inserta las categorías en la tabla 'volumeCategory' asociadas al nuevo libro
         const insertCategoryQuery = `INSERT INTO volumeCategory (id, category) VALUES (?, ?)`;
         // Usa Promise.all para esperar a que todas las inserciones de categorías se completen
         await Promise.all(categories.map((cat) => {
             return database_1.default.execute(insertCategoryQuery, [id, cat]);
         }));
-        console.log('Libro agregado con éxito');
         // Obtén el libro recién insertado
         const book = await getBookByID(id);
         return book;
@@ -190,9 +189,9 @@ async function updateBookBD(book) {
     const sql = `UPDATE volume 
                  SET author = ?, title = ?, description = ?, isbn = ?, year = ?, image = ?, stock = ?, price = ?
                  WHERE id = ?`;
-    const values = [author, title, description, isbn, year, image, stock, id, price];
+    const values = [author, title, description, isbn, year, image, stock, price, id];
     try {
-        database_1.default.query(sql, values);
+        let q = await database_1.default.promise().query(sql, values);
     }
     catch (error) {
         console.error('Error al actualizar el libro:', error);
@@ -207,8 +206,8 @@ async function updateBookCategories(book) {
     await database_1.default.promise().execute(sql1, values1);
     const insertCategoryQuery = `INSERT INTO volumeCategory (id, category) VALUES (?, ?)`;
     // Usa Promise.all para esperar a que todas las inserciones de categorías se completen
-    await Promise.all(categories.map((cat) => {
-        return database_1.default.execute(insertCategoryQuery, [id, cat]);
+    await Promise.all(categories.map(async (cat) => {
+        await database_1.default.promise().execute(insertCategoryQuery, [id, cat]);
     }));
 }
 exports.updateBookCategories = updateBookCategories;

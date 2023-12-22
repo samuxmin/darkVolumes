@@ -8,16 +8,14 @@ import { getAllCategories } from "../src/services/categoriesServices";
 let server:Server
 beforeAll(()=>{
     const PORT = 3000;
-    server = app.listen(PORT,()=>{
-    console.log("Test server running on port " + PORT)
-});
+    server = app.listen(PORT);
 })
 
 afterAll(() => {
     server.close();
    pool.end();
   });
-
+console.log("RUNNING BOOK AND CATEGORIES TEST")
 it("get volumes",volumesDB)
 it("get volume by id",getVolumeByID)
 it("get volume by isbn",getVolumeByISBN)

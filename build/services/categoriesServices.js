@@ -76,10 +76,17 @@ async function createcategory(category) {
 }
 exports.createcategory = createcategory;
 async function deletecategory(category) {
+    let allCats = await getAllCategories();
+    if (!(allCats.includes(category))) {
+        return false;
+    }
     try {
-        database_1.default.execute("DELETE category where category = ?", [category]);
+        await database_1.default.promise().execute("DELETE from category where category = ?", [category]);
+        return true;
     }
     catch (error) {
+        console.log(error);
+        return false;
     }
 }
 exports.deletecategory = deletecategory;

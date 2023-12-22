@@ -6,16 +6,16 @@ const volumeServices_1 = require("../services/volumeServices");
 const sales_1 = require("../services/sales");
 const router = (0, express_1.Router)();
 router.post("/", async (req, res) => {
-    const { user: userMail, books } = req.body;
-    if (!userMail || !(Array.isArray(books))) {
+    const { user, books } = req.body;
+    if (!user || !(Array.isArray(books))) {
         res.status(400);
-        res.send("Invalid request body");
+        res.send({ ok: false, msg: "Invalid request body" });
         return;
     }
-    const user = await (0, userServices_1.getUserByEmail)(userMail);
-    if (user == undefined) {
+    const userVerf = await (0, userServices_1.getUserByEmail)(user);
+    if (userVerf == undefined) {
         res.status(400);
-        res.send("User not found");
+        res.send({ ok: false, msg: "User not found" });
         return;
     }
     try {
@@ -34,13 +34,13 @@ router.post("/", async (req, res) => {
             }
             books[i].book = book;
         }
-        (0, sales_1.saveSaleToDB)(user, books);
-        res.status(200).send("ok");
+        await (0, sales_1.saveSaleToDB)(user, books);
+        res.status(200).send({ ok: true, msg: "ok" });
     }
     catch (err) {
         console.log(err);
         res.status(400);
-        res.send("Something went wrong ಠ╭╮ಠ");
+        res.send({ ok: false, msg: "Something went wrong ಠ╭╮ಠ" });
         return;
     }
 });

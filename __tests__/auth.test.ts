@@ -27,16 +27,14 @@ let newBook = {
 }
 beforeAll(()=>{
     const PORT = 3001;
-    server = app.listen(PORT,()=>{
-    console.log("Test server running on port " + PORT)
-});
+    server = app.listen(PORT);
 })
 
 afterAll(async() => {
     server.close();
     pool.end();
 });
-
+console.log("RUNNING AUTHENTICATION TESTS")
 it("login user",loginAsUser);
 it("create as normal user",usersUnauth);
 

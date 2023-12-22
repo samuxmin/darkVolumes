@@ -36,62 +36,63 @@ router.post("/add", async (req, res) => {
         res.status(400).send("Invalid list of items");
         return;
     }
-    await database_1.default.promise().execute("START TRANSACTION");
+    await database_1.default.promise().query("START TRANSACTION");
     for (let i = 0; i < items.length; i++) {
-        let { id, amount } = items[i];
+        let { book, amount } = items[i];
+        let id = book.id;
         if (!id || !amount) {
             res.status(400).send("Invalid list of items");
-            await database_1.default.promise().execute("ROLLBACK");
+            await database_1.default.promise().query("ROLLBACK");
             return;
         }
-        let book = await (0, volumeServices_1.getBookByID)(id);
-        if (book == undefined) {
+        let bookFromBD = await (0, volumeServices_1.getBookByID)(id);
+        if (bookFromBD == undefined) {
             res.status(400).send(`Invalid id ${id} of book`);
-            await database_1.default.promise().execute("ROLLBACK");
+            await database_1.default.promise().query("ROLLBACK");
             return;
         }
         if (isNaN(amount)) {
             res.status(400).send();
-            await database_1.default.promise().execute("ROLLBACK");
+            await database_1.default.promise().query("ROLLBACK");
             return;
         }
-        if (cartIds.includes(book.id)) {
-            let totalAmount = userCart[cartIds.indexOf(book.id)] + amount;
-            if (book.stock < totalAmount) {
+        if (cartIds.includes(bookFromBD.id)) {
+            let totalAmount = userCart[cartIds.indexOf(bookFromBD.id)].amount + amount;
+            if (bookFromBD.stock < totalAmount) {
                 res.status(418).send("not enough items in stock");
-                await database_1.default.promise().execute("ROLLBACK");
+                await database_1.default.promise().query("ROLLBACK");
                 return;
             }
             //UPDATE
             try {
-                await database_1.default.promise().execute("UPDATE cart set amount = ? WHERE usermail = ? and bookId = ?", [totalAmount, user, id]);
+                await database_1.default.promise().query("UPDATE cart set amount = amount + ? WHERE usermail = ? and bookId = ?", [amount, user, id]);
             }
             catch (error) {
                 console.log(error);
                 res.status(500).send();
-                await database_1.default.promise().execute("ROLLBACK");
+                await database_1.default.promise().query("ROLLBACK");
                 return;
             }
         }
-        else if (book.stock < amount) {
+        else if (bookFromBD.stock < amount) {
             res.status(418).send("not enough items in stock");
-            await database_1.default.promise().execute("ROLLBACK");
+            await database_1.default.promise().query("ROLLBACK");
             return;
         }
         else {
             //INSERT INTO
             try {
-                await database_1.default.promise().execute("INSERT INTO cart(usermail,bookId,amount) values(?, ?, ?)", [user, id, amount]);
+                await database_1.default.promise().query("INSERT INTO cart(usermail,bookId,amount) values(?, ?, ?)", [user, id, amount]);
             }
             catch (error) {
                 console.log(error);
                 res.status(500).send();
-                await database_1.default.promise().execute("ROLLBACK");
+                await database_1.default.promise().query("ROLLBACK");
                 return;
             }
         }
     }
-    await database_1.default.promise().execute("COMMIT");
+    await database_1.default.promise().query("COMMIT");
     res.status(201).send();
 });
 router.post("/remove", async (req, res) => {
@@ -106,28 +107,29 @@ router.post("/remove", async (req, res) => {
         res.status(400).send("Invalid list of items");
         return;
     }
-    await database_1.default.promise().execute("START TRANSACTION");
+    await database_1.default.promise().query("START TRANSACTION");
     for (let i = 0; i < items.length; i++) {
-        let { id, amount } = items[i];
+        let { book, amount } = items[i];
+        let id = book.id;
         if (!id || !amount) {
             res.status(400).send("Invalid list of items");
-            await database_1.default.promise().execute("ROLLBACK");
+            await database_1.default.promise().query("ROLLBACK");
             return;
         }
         if (!cartIds.includes(id)) {
             res.status(400).send(`Id ${id} is not in the cart`);
-            await database_1.default.promise().execute("ROLLBACK");
+            await database_1.default.promise().query("ROLLBACK");
         }
         ;
-        let book = await (0, volumeServices_1.getBookByID)(id);
-        if (book == undefined) {
+        let bookFromDB = await (0, volumeServices_1.getBookByID)(id);
+        if (bookFromDB == undefined) {
             res.status(400).send(`Invalid id ${id} of book`);
-            await database_1.default.promise().execute("ROLLBACK");
+            await database_1.default.promise().query("ROLLBACK");
             return;
         }
         if (isNaN(amount)) {
             res.status(400).send();
-            await database_1.default.promise().execute("ROLLBACK");
+            await database_1.default.promise().query("ROLLBACK");
             return;
         }
         if (cartIds.includes(id)) {
@@ -136,22 +138,22 @@ router.post("/remove", async (req, res) => {
                 newAmount = 0;
             }
             try {
-                await database_1.default.promise().execute("UPDATE cart set amount = ? WHERE usermail = ? and bookId = ?", [newAmount, user, id]);
+                await database_1.default.promise().query("UPDATE cart set amount = ? WHERE usermail = ? and bookId = ?", [newAmount, user, id]);
             }
             catch (err) {
                 console.log(err);
                 res.status(500).send(`Book by id ${id} is not in the cart`);
-                await database_1.default.promise().execute("ROLLBACK");
+                await database_1.default.promise().query("ROLLBACK");
                 return;
             }
         }
         else {
             res.status(400).send(`Book by id ${id} is not in the cart`);
-            await database_1.default.promise().execute("ROLLBACK");
+            await database_1.default.promise().query("ROLLBACK");
             return;
         }
     }
-    await database_1.default.promise().execute("COMMIT");
+    await database_1.default.promise().query("COMMIT");
     res.status(201).send();
 });
 router.delete("/drop", async (req, res) => {

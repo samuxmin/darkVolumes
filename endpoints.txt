@@ -22,9 +22,9 @@ endpoints
 - `/api/admin/createcategory` TESTED
 `/api/admin/deletecategory/:category` TESTED
 
-`/api/buy/`
+`/api/buy/` TESTED
 
-`/api/cart/`
-`/api/cart/drop`
-`/api/cart/add`
-`/api/cart/remove`
+`/api/cart/` TESTED
+`/api/cart/drop` TESTED
+`/api/cart/add` TESTED
+`/api/cart/remove` TESTED

@@ -27,8 +27,10 @@ router.get("/id/:id", async (req, res) => {
         return;
     }
     const bookData = await (0, volumeServices_1.getBookByID)(idNum);
-    if (bookData)
+    if (bookData) {
         res.json(bookData);
+        return;
+    }
     else {
         res.status(400);
         res.send("Error, book identifyed by id " + id + " doesnt exists");
@@ -43,11 +45,14 @@ router.get("/isbn/:isbn", async (req, res) => {
         return;
     }
     const bookData = await (0, volumeServices_1.getBookByISBN)(isbnNum);
-    if (bookData)
+    if (bookData) {
         res.json(bookData);
-    else
+        return;
+    }
+    else {
         res.status(404);
-    res.send("Error, book with isbn " + isbn + " doesnt exists");
+        res.send("Error, book with isbn " + isbn + " doesnt exists");
+    }
 });
 router.get("/search/:text", async (req, res) => {
     const { text } = req.params;

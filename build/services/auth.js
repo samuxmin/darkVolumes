@@ -56,6 +56,7 @@ async function login(req, res) {
         }
         else {
             const token = (0, token_1.createToken)(user);
+            user.password = "";
             res.json({ ok: true, msg: "Login successful", token, user });
         }
     });

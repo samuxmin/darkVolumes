@@ -12,7 +12,7 @@ async function saveSaleToDB(user, books) {
     try {
         await pool.query("START TRANSACTION");
         // Insert sale details into the 'saleDetails' table
-        const saleDetailsResult = await pool.query(`INSERT INTO saleDetails (userMail, saleDate) VALUES (?, ?)`, [user.email, saleDate]);
+        const saleDetailsResult = await pool.query(`INSERT INTO saleDetails (userMail, saleDate) VALUES (?, ?)`, [user, saleDate]);
         console.log(saleDetailsResult);
         const saleID = saleDetailsResult[0].insertId;
         // Insert book sale amounts into the 'BookSaleAmount' table

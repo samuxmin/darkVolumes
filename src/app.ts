@@ -8,7 +8,6 @@ import cartRouter from "./routes/cartRoutes";
 import { validateAdmin } from "./middlewares/validateAdmin";
 import { validateJWT } from "./middlewares/validateJWT";
 
-console.log("Hola mundo");
 const app = express();
 
 app.use(express.json())
