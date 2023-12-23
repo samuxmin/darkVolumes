@@ -1,17 +1,17 @@
 endpoints
 
 
-`/api/user/register/` 
+`/api/user/register/` TESTED
 - `/api/user/login/` TESTED
 
 - `/api/user/email/:email` TESTED
-- `/api/user/email/:nick`
+- `/api/user/email/:nick` TESTED
 
 
 - `/api/volumes/` TESTED
 - `/api/volumes/id/:id` TESTED
 - `/api/volumes/isbn/:isbn` TESTED
-- `/api/volumes/sortby/:sort` 
+- `/api/volumes/sortby/:sort`  TESTED
 - `/api/volumes/search/:text`
 
 - `/api/admin/createbook` TESTED

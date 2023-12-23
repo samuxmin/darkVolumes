@@ -3,6 +3,7 @@ import app from "../src/app";
 import request from "supertest"
 import pool from "../src/database";
 import { getAllCategories } from "../src/services/categoriesServices";
+import { Book } from "../src/types";
 
 //const response = request(app).get("api/volumes")
 let server:Server
@@ -16,12 +17,13 @@ afterAll(() => {
    pool.end();
   });
 console.log("RUNNING BOOK AND CATEGORIES TEST")
-it("get volumes",volumesDB)
-it("get volume by id",getVolumeByID)
-it("get volume by isbn",getVolumeByISBN)
+
+it("get volumes",volumesDB);
+it("get volume by id",getVolumeByID);
+it("get volume by isbn",getVolumeByISBN);
 it("Test for categories", getAllCats);
-
-
+it("get all volumes sorted",getVolumesSorted);
+it("search by text", getSearch);
 /*
 - `/api/volumes/` Get all volumes
 - `/api/volumes/id/:id` Get volume by id
@@ -84,4 +86,44 @@ async function getAllCats(){
     
     expect((await getAllCategories()).includes("testcategory")).toBeFalsy();
     
+}
+
+async function getVolumesSorted() {
+    const sortValues = ["id", "isbn", "title", "author", "year", "stock", "description"]
+    const sortTypes = ["num","num","string","string", "num", "num", "string"]
+    await Promise.all(
+    sortValues.map(async (sortedby,index)=>{
+        const response = await request(app).get(`/api/volumes/sortby/${sortedby}`);
+        const books = response.body;
+        
+        for(let i = 0; i< books.length;i++){
+            if(i>0){
+                const previousValue = books[i - 1][sortedby];
+                const currentValue = books[i][sortedby];
+
+                if(sortTypes[index] == "num"){
+                    let prevVal = parseFloat(previousValue)
+                    let currVal = parseFloat(currentValue)
+                    expect(prevVal).toBeLessThanOrEqual(currVal);
+                }else{
+                    expect(currentValue.toLowerCase() >= previousValue.toLowerCase()).toBeTruthy();
+                }
+
+            }
+            
+        }
+    }))
+}
+
+async function getSearch(){
+
+    // THIS TEST HAS A FLAW, IF THE TEXT IS INCLUDED ONLY IN THE CATEGORIES WILL RETURN FALSE BECAUSE IT DOEST CHECK THE CATEGORIES
+    let text = "attack".toLowerCase();
+    const response = await request(app).get(`/api/volumes/search/${text}`);
+    const books = response.body;
+    expect(Array.isArray(books)).toBeTruthy();
+    books.map((b:Book)=>{
+        let condition = b.year.toString().includes(text) || b.author.toLowerCase().includes(text) || b.title.toLowerCase().includes(text) || b.description.toLowerCase().includes(text);
+        expect(condition).toBeTruthy()
+    })
 }

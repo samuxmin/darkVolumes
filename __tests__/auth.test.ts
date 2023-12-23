@@ -2,12 +2,19 @@ import {Server} from "http"
 import app from "../src/app";
 import request from "supertest"
 import pool from "../src/database";
-import { Book } from "../src/types";
 import { getBookByID } from "../src/services/volumeServices";
+import { getUserByEmail } from "../src/services/userServices";
 
 //const response = request(app).get("api/volumes")
 let server:Server
 let token:string;
+let newUser = {
+    email: "test@mail.com",
+    nick: "testnick",
+    password: "testpass",
+    birthdate:"2022-07-22",
+
+}
 
 let newBook = {
  
@@ -31,6 +38,7 @@ beforeAll(()=>{
 })
 
 afterAll(async() => {
+    await pool.promise().query(`DELETE FROM user WHERE email = ? and nick = ?`,[newUser.email,newUser.nick]);
     server.close();
     pool.end();
 });
@@ -40,6 +48,8 @@ it("create as normal user",usersUnauth);
 
 it("login admin",loginAsAdmin);
 it("create as admin", adminCreate);
+it("register new user",register);
+it("get new user by nick",getByNickEndpoint);
 
 async function loginAsUser(){
     const response = await request(app).post("/api/user/login").send({
@@ -105,11 +115,22 @@ async function adminCreate(){
     let delResp = await deleteBook(response.body.id);
 
     expect(delResp.body.ok);
-    
-   // expect(await getBookByID(response.body.id)).toBe(undefined);
 }
 async function deleteBook(id:number){
     const response = await request(app).delete("/api/admin/deletebook/id/"+id).send({token});
-    //console.log(response);
     return response;
+}
+
+async function register(){
+    const response = await request(app).post("/api/user/register").send(newUser)
+    let userGotten = await getUserByEmail(newUser.email);
+    expect(userGotten).not.toBeUndefined();
+
+}
+
+async function getByNickEndpoint(){
+
+     const response = await request(app).get(`/api/user/nick/${newUser.nick}`);
+     expect(response.body.nick).toBe(newUser.nick);
+     expect(response.body.email).toBe(newUser.email);
 }
